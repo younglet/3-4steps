@@ -9,4 +9,4 @@ start_time = time.time()
 print_10k_times()
 end_time = time.time()
 
-print(f'用时::{ end_time - start_time }S')
+print(f'用时:{ end_time - start_time }S')

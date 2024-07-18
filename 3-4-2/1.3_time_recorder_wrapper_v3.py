@@ -6,7 +6,7 @@ def run_with_time_recorder(func):
         start_time = time.time()
         func()
         end_time = time.time()
-        print(f'{func.__name__}:{ end_time - start_time }S')
+        print(f'函数{func.__name__}用时:{ end_time - start_time }S')
     return modified_func
 
 def print_10k_times():
