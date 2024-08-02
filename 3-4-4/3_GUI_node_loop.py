@@ -22,9 +22,9 @@ def init():
     easygui.msgbox('欢迎进入机器人操作系统')
 
 
-@set_task(gui_node, loop=True, main=True)
+@set_task(gui_node, loop=True)
 def set_input():
-    choice = easygui.choicebox('请选择要控制的机器人', choices=['前进', '停止', '后退'])
+    choice = easygui.buttonbox('请选择要控制的机器人', choices=['前进', '停止', '后退'])
     easygui.msgbox('任务：' + choice + '开始')
     time.sleep(1)
     easygui.msgbox('任务： ' + choice + '已完成')

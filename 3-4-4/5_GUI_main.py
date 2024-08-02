@@ -14,7 +14,6 @@ def init():
     except FileNotFoundError:
         config = { 'password':'123456' }
     password = easygui.passwordbox('请输入登录密码')
-    #TODO: 设置密码循环次数
     if password ==  config['password']:
         easygui.msgbox('登录成功')
     else:

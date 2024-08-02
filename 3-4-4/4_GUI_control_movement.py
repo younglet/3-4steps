@@ -4,6 +4,7 @@ from miniROS import *
 import easygui
 import json
 import time
+
 gui_node = Node('GUI')
 @initialize(gui_node)
 def init():
@@ -33,7 +34,7 @@ def set_input():
     
     if choice == '刷新':
         pass
-    
+
     else:
         if choice == '前进':
             Bus.publish('set_velocity', 10)
@@ -45,11 +46,12 @@ def set_input():
         while not gui_node.messages:
             pass
 
-
-
 @subscribe(gui_node, 'message')
 def handler(data):
     gui_node.messages.append(data)
+
+
+    
 
 movement_node = Node('Movement')
 @initialize(movement_node)
