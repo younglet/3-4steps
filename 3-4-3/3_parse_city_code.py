@@ -1,6 +1,6 @@
 import json
 
-with open('citycode.json', 'r') as file:
+with open('citycode.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 
 # 方法一：遍历

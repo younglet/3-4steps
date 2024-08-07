@@ -9,17 +9,16 @@ gui_node = Node('GUI')
 def init():
     gui_node.messages = [] # 用于存储别的节点发来的信息
     try:
-        with open('config.json', 'r') as f:
+        with open('config.json', 'r', encoding='utf-8') as f:
             config = json.load(f)
     except FileNotFoundError:
         config = { 'password':'123456' }
     password = easygui.passwordbox('请输入登录密码')
     if password ==  config['password']:
-        easygui.msgbox('登录成功')
+        easygui.msgbox('登录成功，欢迎进入机器人操作系统')    
     else:
         easygui.msgbox('登录失败')
         miniROS.stop()
-    easygui.msgbox('欢迎进入机器人操作系统')
 
 
 @set_task(gui_node, loop=True, main=True)
@@ -29,7 +28,7 @@ def set_input():
         message = gui_node.messages.pop(0)
         easygui.msgbox(message)
 
-    choice = easygui.buttonbox('请选择要控制的机器人', choices=['刷新状态','前进', '停止','后退', '天气查询'])
+    choice = easygui.buttonbox('请选择要控制的机器人', choices=['刷新状态', '前进', '停止','后退', '天气查询'])
 
     if choice == '刷新状态':
         gui_node.node_continue()

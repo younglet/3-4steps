@@ -88,9 +88,9 @@ def handler(data):
      
 @subscribe(prompt_node, 'setting')
 def handler(data):
-    with open('config.json', 'r') as f:
+    with open('config.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
-    with open('config.json', 'w') as f:
+    with open('config.json', 'w', encoding='utf-8') as f:
         config['character'] = data['character']
         config['talk_manner'] = data['talk_manner']
         json.dump(config, f)
