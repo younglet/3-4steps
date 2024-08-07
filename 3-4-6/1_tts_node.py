@@ -14,8 +14,7 @@ def init():
     print(config)
     password = easygui.passwordbox('请输入登录密码')
     if password ==  config['password']:
-        easygui.msgbox('登录成功')
-        easygui.msgbox('欢迎进入机器人操作系统')
+        easygui.msgbox('登录成功，欢迎进入机器人操作系统')    
     else:
         easygui.msgbox('登录失败')
         miniROS.stop()
