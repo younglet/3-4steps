@@ -94,7 +94,6 @@ def handler(data):
         config['talk_manner'] = data['talk_manner']
         json.dump(config, f)
     Bus.publish('message','设置成功')
-    prompt_node.is_first = True
     prompt_node.character = data['character']
     prompt_node.talk_manner = data['talk_manner']
 
@@ -140,16 +139,16 @@ def handler(data):
         'Content-Type': 'application/json'
     }
     response = requests.request("POST", LLM_node.url, headers=headers, data=json.dumps(LLM_node.payload)).json()
-    answer=response.get('error_msg')
+    error=response.get('error_msg')
     
-    if not answer:
+    if not error:
         answer=response.get('result')
         LLM_node.payload["messages"].append({
                     "role": "assistant",
                     "content": answer
                 })
     else:
-        answer = 'error: ' + answer
+        answer = 'error: ' + error
         LLM_node.payload["messages"].pop()
     
     Bus.publish('message', answer)
