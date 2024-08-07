@@ -39,20 +39,31 @@ def set_input():
 
         if choice == '语音输入':
             Bus.publish('record_signal', True)
-            time.sleep(3)
+            easygui.msgbox('正在录音中...',ok_button='停止录音')
             Bus.publish('record_signal', False)
-            gui_node.node_continue()
-        if choice == '文字输入':
+            message = True
+        elif choice == '文字输入':
             message = easygui.enterbox('请输入聊天内容', '聊天信息')
+            Bus.publish('continue_chat', message)
         else:
-            message = None
+            message = False
+        
+        print(message)
 
         while message:
-            Bus.publish('continue_chat', message)
             while not gui_node.messages:
                 time.sleep(0.001)
-            message = easygui.enterbox(gui_node.messages.pop(0), '聊天信息')
-
+            choice = easygui.buttonbox(gui_node.messages.pop(0), '聊天信息',choices=['语音输入','文字输入','取消'])
+            if choice == '语音输入':
+                message = True
+                Bus.publish('record_signal', True)
+                easygui.msgbox('正在录音中...',ok_button='停止录音')
+                Bus.publish('record_signal', False)
+            elif choice == '文字输入':
+                message = easygui.enterbox('请输入聊天内容', '聊天信息')
+                Bus.publish('continue_chat', message)
+            else:
+                message = False
         gui_node.node_continue()
 
 
@@ -72,6 +83,7 @@ def set_input():
 @subscribe(gui_node, 'message')
 def handler(data):
     gui_node.messages.append(data)
+
 
 
 ################################################提示词节点#################################################
@@ -219,14 +231,40 @@ def setup_record():
     Bus.publish('STT', record_node.filename)
 
 @subscribe(record_node, 'record_signal')
-def handle(isstart):
-    record_node.is_recording = isstart
+def handle(is_start):
+    record_node.is_recording = is_start
     
+
+
+###################################################语音转文字节点#########################################
+import assemblyai as aai
+
+STT_node = Node('STT')
+
+@initialize(STT_node)
+def init():
+    # 此处的密钥需要自己登陆网址https://www.assemblyai.com/，注册即可获得，免费使用
+    aai.settings.api_key = "59057d149d6a468b84b94a65ed646f7a"
+    STT_node.config = aai.TranscriptionConfig(language_code='zh')
+    STT_node.transcriber = aai.Transcriber()
     
+@subscribe(STT_node, 'STT')
+def handler(filename):
+    # 通过assemblyai库将语音转文字
+    transcript = STT_node.transcriber.transcribe(filename, config=STT_node.config)
+    if transcript.status == aai.TranscriptStatus.error:
+        print(transcript.error)
+    else:
+        print(transcript.text)
+        Bus.publish('continue_chat', transcript.text)
+    
+
+
 #################################################注册要运行的节点###########################################
 LLM_node.register()
 prompt_node.register()
 gui_node.register()
 TTS_node.register()
 record_node.register()
+STT_node.register()
 miniROS.run()

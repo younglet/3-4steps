@@ -74,6 +74,7 @@ def handler(data):
     gui_node.messages.append(data)
 
 
+
 ################################################提示词节点#################################################
 import json
 prompt_node = Node('Prompt')
@@ -219,14 +220,40 @@ def setup_record():
     Bus.publish('STT', record_node.filename)
 
 @subscribe(record_node, 'record_signal')
-def handle(isstart):
-    record_node.is_recording = isstart
+def handle(is_start):
+    record_node.is_recording = is_start
     
+
+
+###################################################语音转文字节点#########################################
+import assemblyai as aai
+
+STT_node = Node('STT')
+
+@initialize(STT_node)
+def init():
+    # 此处的密钥需要自己登陆网址https://www.assemblyai.com/，注册即可获得，免费使用
+    aai.settings.api_key = "59057d149d6a468b84b94a65ed646f7a"
+    STT_node.config = aai.TranscriptionConfig(language_code='zh')
+    STT_node.transcriber = aai.Transcriber()
     
+@subscribe(STT_node, 'STT')
+def handler(filename):
+    # 通过assemblyai库将语音转文字
+    transcript = STT_node.transcriber.transcribe(filename, config=STT_node.config)
+    if transcript.status == aai.TranscriptStatus.error:
+        print(transcript.error)
+    else:
+        print(transcript.text)
+        Bus.publish('prompt', transcript.text)
+    
+
+
 #################################################注册要运行的节点###########################################
 LLM_node.register()
 prompt_node.register()
 gui_node.register()
 TTS_node.register()
 record_node.register()
+STT_node.register()
 miniROS.run()

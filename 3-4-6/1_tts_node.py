@@ -9,16 +9,16 @@ gui_node = Node('GUI')
 @initialize(gui_node)
 def init():
     gui_node.messages = [] # 用于存储别的节点发来的信息
-    with open('config.json', 'r') as f:
+    with open('config.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
     print(config)
     password = easygui.passwordbox('请输入登录密码')
     if password ==  config['password']:
         easygui.msgbox('登录成功')
+        easygui.msgbox('欢迎进入机器人操作系统')
     else:
         easygui.msgbox('登录失败')
         miniROS.stop()
-    easygui.msgbox('欢迎进入机器人操作系统')
 
 @set_task(gui_node, loop=True, main=True)
 def set_input():
@@ -71,7 +71,7 @@ prompt_node = Node('Prompt')
 
 @initialize(prompt_node)
 def init():
-    with open('config.json', 'r') as f:
+    with open('config.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
     prompt_node.character = config['character']
     prompt_node.talk_manner = config['talk_manner']
@@ -79,7 +79,7 @@ def init():
 @subscribe(prompt_node, 'start_chat')
 def handler(data):
     prompt = f"请完全重置你自己的性格和说话方式，接下来我和你的对话, 请你的性格是：{prompt_node.character}，\
-            你和我的对话方式是：{prompt_node.talk_manner}。回答必须限定60字以内。"
+            你和我的对话方式是：{prompt_node.talk_manner}。回答必须限定60字以内。如果明白，用符合人设的10个字以内的回答回复。"
     Bus.publish('prompt', {'prompt':prompt, 'is_first':True})
 
 @subscribe(prompt_node, 'continue_chat')
@@ -110,7 +110,7 @@ LLM_node = Node('LLM')
 
 @initialize(LLM_node)
 def init():
-    with open('config.json', 'r') as f:
+    with open('config.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
     request_url = f"https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={config['API_Key']}&client_secret={config['Secret_Key']}"
     payload = json.dumps("")
@@ -156,13 +156,13 @@ def handler(data):
     Bus.publish('text_to_speak', answer)
 
 
-###################################################文字转语音节点########################################
+###################################################文字转语音节点############sssssssssssssssss############################
 import pyttsx3
 
 TTS_node = Node('TTS')
 
 @initialize(TTS_node)
-def init(TTS_node):
+def init():
     engine = pyttsx3.init()
     rate = engine.getProperty('rate') 
     engine.setProperty('rate', rate+50)
