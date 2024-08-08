@@ -31,7 +31,7 @@ def set_input():
         message = gui_node.messages.pop(0)
         easygui.msgbox(message)
 
-    choice = easygui.buttonbox('请选择操作', choices=['刷新状态','开启（关闭）摄像头',  '设置滤镜', '截取画面','相册记录'])
+    choice = easygui.buttonbox('请选择操作', choices=['刷新状态', '开启（关闭）摄像头', '设置滤镜', '截取画面'])
 
     if choice == '刷新状态':
         gui_node.node_continue()
@@ -47,15 +47,6 @@ def set_input():
     if choice == '截取画面':
         Bus.publish('shoot_frame', None)
 
-    if choice == '相册记录':
-        Bus.publish('show_album', '打开')
-        while True:
-            choice = easygui.buttonbox('请选择操作', choices=['下一张', '上一张', '关闭'])
-            Bus.publish('show_album', choice)
-            if choice == '关闭':
-                break
-        gui_node.node_continue()
-    
     while not gui_node.messages:
         pass
 
@@ -77,6 +68,7 @@ def init():
 @set_task(camera_node, loop=True)
 def process_camera():
     if not camera_node.camera_status:
+        cv2.destroyAllWindows()
         camera_node.node_continue()
 
     ret, frame = camera_node.camera.read()
@@ -112,45 +104,28 @@ def shoot_frame(data):
         Bus.publish('message', '请先打开摄像头')
 
 
+###############################################图像保存节点#################################################
 
 import datetime
 from pathlib import Path
 
 album_node = Node('Album')
+
 @initialize(album_node)
 def init():
-    album_node.path = Path('imgs')
-    album_node.imgs = list(album_node.path.glob('*.jpg'))
-    album_node.pointer = 0
-    album_node.album_status = False
+    with open('config.json', 'r', encoding='utf-8') as f:
+        config = json.load(f)
+    album_node.path = Path(config['save_path'])
+    album_node.path.mkdir(exist_ok=True)
 
-@set_task(album_node, loop=True)
-def process_camera():
-    if not album_node.album_status:
-        album_node.node_continue()
-    print(album_node.imgs[album_node.pointer])
-    img = cv2.imread(str(album_node.imgs[album_node.pointer]))
-    cv2.imshow('album', img)
-    cv2.waitKey(300)
+
 
 @subscribe(album_node, 'frame_to_save')
 def handler(data):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     cv2.imwrite(album_node.path/f"{timestamp}.jpg", data)
-    album_node.imgs.append(album_node.path/f"{timestamp}.jpg")
     Bus.publish('message', f'{timestamp}.jpg 已保存')
 
-@subscribe(album_node, 'show_album')
-def handler(data):
-    if data == '打开':
-        album_node.album_status = True
-        album_node.pointer = 0
-    if data == '下一张':
-        album_node.pointer = (album_node.pointer + 1) % len(album_node.imgs)
-    if data == '上一张':
-        album_node.pointer = (album_node.pointer - 1) % len(album_node.imgs)
-    if data == '关闭':
-        album_node.album_status = False
 
 gui_node.register()
 camera_node.register()
