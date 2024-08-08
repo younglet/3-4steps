@@ -39,7 +39,6 @@ def set_input():
     if choice == '开启（关闭）摄像头':
         Bus.publish('set_camera_status', None)
 
-
     if choice == '设置滤镜':
         choices =[f['name'] for f in  gui_node.filters]
         choice = easygui.buttonbox('请选择操作', choices=choices)
@@ -47,6 +46,7 @@ def set_input():
     
     if choice == '截取画面':
         Bus.publish('shoot_frame', None)
+
     if choice == '相册记录':
         Bus.publish('get_frame', '打开')
         while True:
@@ -73,21 +73,18 @@ def init():
     camera_node.current_frame = None
     camera_node.camera_status = False
     camera_node.filter = None
-    
 
 @set_task(camera_node, loop=True)
 def process_camera():
-    cv2.waitKey(30)
     if not camera_node.camera_status:
-        try:
-            cv2.destroyWindow('camera')
-        except:
-            pass
+        cv2.destroyAllWindows()
         camera_node.node_continue()
 
     ret, frame = camera_node.camera.read()
+    cv2.waitKey(10)
 
     if ret:
+        
         Bus.publish('camera_frame', frame)
     else:
         Bus.publish('message', '摄像头读取失败')
@@ -103,7 +100,6 @@ def set_camera_status(data):
     status = '打开' if camera_node.camera_status else '关闭'
     Bus.publish('message', f'摄像头已{status}')
 
-
 @subscribe(camera_node, 'set_filter')
 def set_filter(data):
     camera_node.filter = data['data']
@@ -111,14 +107,8 @@ def set_filter(data):
 
 
 
-@subscribe(camera_node, 'shoot_frame')
-def shoot_frame(data):
-    Bus.publish('frame_to_save', camera_node.current_frame)
-
-
 import datetime
 from pathlib import Path
-from PIL import Image
 
 album_node = Node('Album')
 @initialize(album_node)
@@ -128,18 +118,6 @@ def init():
     album_node.pointer = 0
     album_node.album_status = False
 
-
-@set_task(album_node, loop=True)
-def show_img():
-    cv2.waitKey(500)
-    album_node.node_continue()
-    if not album_node.album_status:
-        cv2.destroyWindow('album')
-        album_node.node_continue()
-    print((album_node.imgs[album_node.pointer]))
-    img = cv2.imread(str(album_node.imgs[album_node.pointer]))
-    print(img)
-    cv2.imshow('album', img)
 
 
 
@@ -151,7 +129,7 @@ def handler(data):
     Bus.publish('message', f'{timestamp}.jpg 已保存')
 
 
-@subscribe(album_node, 'get_frame')
+@subscribe(album_node, 'show_album')
 def handler(data):
     if data == '打开':
         album_node.album_status = True
@@ -163,23 +141,6 @@ def handler(data):
     if data == '关闭':
         album_node.album_status = False
 
-
 gui_node.register()
 camera_node.register()
-album_node.register()
 miniROS.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
