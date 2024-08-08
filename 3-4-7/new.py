@@ -48,10 +48,10 @@ def set_input():
         Bus.publish('shoot_frame', None)
 
     if choice == '相册记录':
-        Bus.publish('get_frame', '打开')
+        Bus.publish('show_album', '打开')
         while True:
             choice = easygui.buttonbox('请选择操作', choices=['下一张', '上一张', '关闭'])
-            Bus.publish('get_frame', choice)
+            Bus.publish('show_album', choice)
             if choice == '关闭':
                 break
         gui_node.node_continue()
@@ -77,14 +77,12 @@ def init():
 @set_task(camera_node, loop=True)
 def process_camera():
     if not camera_node.camera_status:
-        cv2.destroyAllWindows()
         camera_node.node_continue()
 
     ret, frame = camera_node.camera.read()
-    cv2.waitKey(10)
+    cv2.waitKey(30)
 
     if ret:
-        
         Bus.publish('camera_frame', frame)
     else:
         Bus.publish('message', '摄像头读取失败')
@@ -106,6 +104,14 @@ def set_filter(data):
     Bus.publish('message', f'滤镜已设置为【{data['name']}】')
 
 
+@subscribe(camera_node, 'shoot_frame')
+def shoot_frame(data):
+    if camera_node.camera_status:
+        Bus.publish('frame_to_save', camera_node.current_frame)
+    else:
+        Bus.publish('message', '请先打开摄像头')
+
+
 
 import datetime
 from pathlib import Path
@@ -118,8 +124,14 @@ def init():
     album_node.pointer = 0
     album_node.album_status = False
 
-
-
+@set_task(album_node, loop=True)
+def process_camera():
+    if not album_node.album_status:
+        album_node.node_continue()
+    print(album_node.imgs[album_node.pointer])
+    img = cv2.imread(str(album_node.imgs[album_node.pointer]))
+    cv2.imshow('album', img)
+    cv2.waitKey(300)
 
 @subscribe(album_node, 'frame_to_save')
 def handler(data):
@@ -127,7 +139,6 @@ def handler(data):
     cv2.imwrite(album_node.path/f"{timestamp}.jpg", data)
     album_node.imgs.append(album_node.path/f"{timestamp}.jpg")
     Bus.publish('message', f'{timestamp}.jpg 已保存')
-
 
 @subscribe(album_node, 'show_album')
 def handler(data):
@@ -143,4 +154,5 @@ def handler(data):
 
 gui_node.register()
 camera_node.register()
+album_node.register()
 miniROS.run()
