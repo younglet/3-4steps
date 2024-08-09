@@ -231,8 +231,8 @@ def setup_record():
     Bus.publish('STT', record_node.filename)
 
 @subscribe(record_node, 'record_signal')
-def handle(is_start):
-    record_node.is_recording = is_start
+def handle(is_started):
+    record_node.is_recording = is_started
     
 
 
