@@ -50,12 +50,12 @@ def set_input():
     while not gui_node.messages:
         pass
 
-###############################################摄像头节点#################################################
-import cv2
-import numpy as np
 @subscribe(gui_node, 'message')
 def handler(data):
     gui_node.messages.append(data)
+###############################################摄像头节点#################################################
+import cv2
+import numpy as np
 
 camera_node = Node('Camera')
 @initialize(camera_node)
@@ -93,8 +93,7 @@ def set_camera_status(data):
 @subscribe(camera_node, 'set_filter')
 def set_filter(data):
     camera_node.filter = data['data']
-    Bus.publish('message', f'滤镜已设置为【{data['name']}】')
-
+    Bus.publish('message', f'滤镜已设置为【{data["name"]}】')
 
 @subscribe(camera_node, 'shoot_frame')
 def shoot_frame(data):
