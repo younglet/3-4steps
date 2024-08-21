@@ -46,6 +46,6 @@ height_data = [0]
 time_data = [0]
 
 # 创建动画
-ani = FuncAnimation(fig, update, frames=200, init_func=init, interval=1, repeat=False)
+animation = FuncAnimation(fig, update, frames=200, init_func=init, interval=1, repeat=False)
 
 plt.show()

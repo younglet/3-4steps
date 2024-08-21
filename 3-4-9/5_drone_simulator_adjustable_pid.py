@@ -1,7 +1,6 @@
-from drone_simulator import Drone  # 假设这是一个已存在的模块
+from drone_simulator import Drone  
 # 目标高度
 target_height = 100
-# 初始化无人机，目标高度为100
 drone = Drone(target_height)
 
 def init():
@@ -64,7 +63,6 @@ s_Kd = Slider(ax_Kd, 'D', 0.0, 1.0, valinit=0.1)
 
 
 
-# 创建动画
-ani = FuncAnimation(fig, update, frames=200, init_func=init, interval=100, repeat=True)
+animation = FuncAnimation(fig, update, frames=200, init_func=init, interval=100, repeat=True)
 
 plt.show()
