@@ -39,7 +39,6 @@ ax.set_xlim(0, 200)
 ax.set_ylim(0, 120)
 line, = ax.plot([], [], lw=2)
 dt = 1
-MAX_POWER = 40
 last_error = 0
 integral = 0
 
@@ -49,6 +48,6 @@ height_data = [0]
 time_data = [0]
 
 # 创建动画
-ani = FuncAnimation(fig, update, frames=200, init_func=init, interval=1, repeat=False)
+ani = FuncAnimation(fig, update, frames=200, init_func=init, interval=1, repeat=True)
 
 plt.show()

@@ -63,7 +63,7 @@ class Drone:
     def step(self, thrust, dt):
         """
         计算无人机下一时刻的状态
-        :param thrust: 推力
+        :param thrust: 推力比例
         :param dt: 时间间隔
         """
         if self.height >= 0:
@@ -82,7 +82,7 @@ class Drone:
         """
         打印无人机当前状态
         """
-        print(f"当前高度: {self.height:.2f}, 当前速度: {self.velocity: .4f}, 当前加速度: {self.acceleration: .4f}")
+        print(f"当前高度: {self.height:3.6f}, 当前速度: {self.velocity: .6f}, 当前加速度: {self.acceleration: .6f}")
 if __name__ == '__main__':
 
     drone = Drone(target_height=100) # 初始化无人机，目标高度为100
