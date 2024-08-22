@@ -151,7 +151,7 @@ def update_servo(face_bboxC):
         servo_node.integral += error
     else:
         servo_node.integral = 0 
-    # 误差微分，即变化速度。因为时间间隔均匀，所以可以简化为1秒
+    # 误差微分，即误差的变化速度。因为时间间隔均匀，所以除数可以简化为1，或者直接省略
     derivative = (error - servo_node.last_error) / 1 
     # 计算期望角度变化
     angle_delta = (servo_node.Kp * error) + (servo_node.Ki * servo_node.integral) + (servo_node.Kd * derivative) 
