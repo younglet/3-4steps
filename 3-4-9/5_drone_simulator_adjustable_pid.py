@@ -1,4 +1,4 @@
-from drone_simulator import Drone  
+from drone import Drone  
 # 目标高度
 target_height = 100
 drone = Drone(target_height)

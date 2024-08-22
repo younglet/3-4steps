@@ -1,4 +1,4 @@
-from drone_simulator import Drone
+from drone import Drone  
 
 drone = Drone(target_height=100) # 初始化无人机，目标高度为100
 

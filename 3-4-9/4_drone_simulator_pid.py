@@ -1,4 +1,4 @@
-from drone_simulator import Drone
+from drone import Drone  
 
 drone = Drone(target_height=100) # 初始化无人机，目标高度为100
 
@@ -48,6 +48,6 @@ height_data = [0]
 time_data = [0]
 
 # 创建动画
-animation = FuncAnimation(fig, update, frames=200, init_func=init, interval=1, repeat=True)
+animation = FuncAnimation(fig, update, frames=200, init_func=init, interval=1)
 
 plt.show()

@@ -2,7 +2,6 @@
 from miniROS import *
 ################################################GUI节点#################################################
 
-import json 
 import easygui
 import time
 
@@ -20,7 +19,7 @@ def set_input():
         message = gui_node.messages.pop(0)
         easygui.msgbox(message)
 
-    choice = easygui.buttonbox('请选择操作', choices=['刷新状态', '开启（关闭）摄像头', '开启（关闭）人脸检测', 'PID参数设置'])
+    choice = easygui.buttonbox('请选择操作', choices=['刷新状态', '开启（关闭）摄像头', '开启（关闭）人脸检测', '开启（关闭）人脸跟随'])
 
     if choice == '刷新状态':
         gui_node.node_continue()
@@ -31,6 +30,8 @@ def set_input():
     if choice == '开启（关闭）人脸检测':
         Bus.publish('set_face_detect_status', None)
 
+    if choice == '开启（关闭）人脸跟随':
+        Bus.publish('set_follow_status', None)
 
     while not gui_node.messages:
         pass
@@ -45,13 +46,12 @@ def handler(data):
 camera_node = Node('Camera')
 @initialize(camera_node)
 def init():
-    camera_node.camera = cv2.VideoCapture(0)
+    camera_node.camera = cv2.VideoCapture(1)
     camera_node.height = camera_node.camera.get(cv2.CAP_PROP_FRAME_HEIGHT)
     camera_node.width = camera_node.camera.get(cv2.CAP_PROP_FRAME_WIDTH)
     camera_node.current_frame = None
     camera_node.camera_status = False
     camera_node.face_bboxC = None
-    camera_node.hand_detection = None
 
 @set_task(camera_node, loop=True)
 def process_camera():
@@ -69,7 +69,7 @@ def process_camera():
 
     camera_node.current_frame = frame
 
-    # 绘制识别结果图形方法一： 在摄像头节点处理数据
+    # 绘制人脸边框
     if camera_node.face_bboxC:
         x_min = int(camera_node.face_bboxC.xmin * camera_node.width)
         y_min = int(camera_node.face_bboxC.ymin * camera_node.height)
@@ -77,12 +77,7 @@ def process_camera():
         box_height = int(camera_node.face_bboxC.height * camera_node.height)
         cv2.rectangle(frame, (x_min, y_min), (x_min + box_width, y_min + box_height), (0, 255, 0), 2)
     
-    # 绘制识别结果图形方法二： 调用识别节点封装的函数
-    if camera_node.hand_detection:
-        draw = camera_node.hand_detection['draw']
-        land_marks = camera_node.hand_detection['landmarks']
-        draw(frame, land_marks)
-    
+
     cv2.imshow('camera', frame)
 
 @subscribe(camera_node, 'set_camera_status')
@@ -94,10 +89,6 @@ def set_camera_status(data):
 @subscribe(camera_node, 'face_bboxC')
 def get_face_bboxC(data):
     camera_node.face_bboxC = data
-
-@subscribe(camera_node, 'hand_detection')
-def get_hand_landmarks(data):
-    camera_node.hand_detection = data
 
 
 ############################################### 人脸检测节点 #################################################
@@ -126,4 +117,66 @@ def process_frame(data):
         Bus.publish('face_bboxC', bboxC)
     else:
         Bus.publish('face_bboxC', None)
-    
+
+
+       
+################################################设定舵机节点#################################################
+from servo import ServoController
+
+servo_node = Node('Servo')
+
+@initialize(servo_node)
+def init():
+    servo_node.servo = ServoController()
+    servo_node.angle = servo_node.servo.read_angle()
+    # 是否跟随
+    servo_node.is_following = False
+    # 角速度, 单位度每秒
+    servo_node.angular_velocity = 120
+    # PID参数
+    servo_node.Kp = 6
+    servo_node.Ki = 0.00001# 积分增益
+    servo_node.Kd = 0.3  # 微分增益
+    servo_node.last_error = 0  # 上一次的误差，用于微分计算
+    servo_node.integral = 0  # 误差的积分
+
+@subscribe(servo_node, 'face_bboxC')
+def update_servo(face_bboxC):
+    if not servo_node.is_following or not face_bboxC:
+        return
+    # 计算当前误差
+    error = 0.5 -  (face_bboxC.xmin + face_bboxC.width / 2) 
+    # 将当前误差计入累积误差
+    if 0 < servo_node.angle < 240:
+        servo_node.integral += error
+    else:
+        servo_node.integral = 0 
+    # 误差微分，即变化速度。因为时间间隔均匀，所以可以简化为1秒
+    derivative = (error - servo_node.last_error) / 1 
+    # 计算期望角度变化
+    angle_delta = (servo_node.Kp * error) + (servo_node.Ki * servo_node.integral) + (servo_node.Kd * derivative) 
+    # 更新舵机角度
+    new_angle = max(min(servo_node.angle + angle_delta, 240), 0)
+    # 计算移动到新角度所需的时间
+    angle_change = abs(angle_delta)
+    time_to_move = angle_change / servo_node.angular_velocity
+    # 发送新的角度和时间到舵机
+    servo_node.servo.set_angle_time(new_angle, time_to_move)
+    # 更新当前角度和上一次误差
+    servo_node.angle = new_angle
+    servo_node.last_error = error
+        
+
+
+@subscribe(servo_node, 'set_follow_status')
+def set_follow_status(data):
+    servo_node.is_following = not servo_node.is_following
+    status = '打开' if servo_node.is_following else '关闭'
+    Bus.publish('message', f'跟随已{status}')
+        
+
+gui_node.register()
+camera_node.register()
+face_detect_node.register()
+servo_node.register()
+miniROS.run()
