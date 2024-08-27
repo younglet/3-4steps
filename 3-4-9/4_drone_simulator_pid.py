@@ -31,7 +31,7 @@ def update(frame):
     global drone, dt, height_data, time_data, last_error, integral
 
     error = drone.target_height - drone.height
-    integral += error
+    integral += error # 误差累积
     derivative = (error - last_error) / dt
     thrust =(0.1 * error   + 0.1 *  derivative +  0.00035 * integral)
     drone.step(thrust, dt)
