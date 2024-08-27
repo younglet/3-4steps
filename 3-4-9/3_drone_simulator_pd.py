@@ -26,9 +26,9 @@ def init():
     return line, 
 
 
-def  update(frame):
+def update(frame):
     global drone, dt, height_data, time_data, last_error
-    
+
     error = drone.target_height - drone.height
     derivative = (error - last_error) / dt
     thrust = 0.1 * error  + 0.1 *  derivative  

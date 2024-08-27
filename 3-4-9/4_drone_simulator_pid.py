@@ -27,9 +27,9 @@ def init():
     return line, 
 
 
-def  update(frame):
+def update(frame):
     global drone, dt, height_data, time_data, last_error, integral
-    
+
     error = drone.target_height - drone.height
     integral += error
     derivative = (error - last_error) / dt

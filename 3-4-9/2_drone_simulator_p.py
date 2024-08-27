@@ -25,13 +25,13 @@ def init():
     return line, 
 
 
-def  update(frame):
+def update(frame):
     global drone, dt, height_data, time_data
 
     error = drone.target_height - drone.height
     thrust = 0.1 * error
     drone.step(thrust, dt)
-    
+
     height_data.append(drone.height)
     time_data.append(time_data[-1] + dt)
     line.set_data(time_data, height_data)
