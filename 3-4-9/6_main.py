@@ -76,7 +76,6 @@ def process_camera():
         box_width = int(camera_node.face_bboxC.width * camera_node.width)
         box_height = int(camera_node.face_bboxC.height * camera_node.height)
         cv2.rectangle(frame, (x_min, y_min), (x_min + box_width, y_min + box_height), (0, 255, 0), 2)
-    
 
     cv2.imshow('camera', frame)
 

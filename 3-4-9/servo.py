@@ -19,10 +19,6 @@ class ServoController:
         time的范围是0-30秒
         angle的范围是0-240度,需要映射到0-1000的整数
         """
-        # if not 0 <= angle <= 240:
-        #     raise ValueError("Input angle must be between 0 and 240.")
-        # if not 0 <= time <= 30:
-        #     raise ValueError("Input time must be between 0 and 30.")
         angle = max(min(angle, 240), 0)
         time = max(min(time, 30), 0)
         # 角度映射到0-1000，并确保结果为整数
@@ -82,13 +78,3 @@ class ServoController:
     @staticmethod
     def calculate_crc(data):
         return (~(sum(data))) & 0xff
-    
-    
-# x=ServoController()
-# for angle in range(21,100):
-    
-#     x.set_angle_time(angle, 0.1)
-# print(x.read_angle())
-    
-
-
