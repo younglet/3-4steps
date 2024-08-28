@@ -20,8 +20,8 @@ def start_draw():
 @add_method(draw_node)
 def play_generate():
     if draw_node.orientation is not None:
-        # 将视频生成器广播给'frame_gen'
-        Bus.publish('frame_gen', draw_node.darwapp.video_generator(draw_node.orientation))
+        # 将视频生成器广播给'frame_generator'
+        Bus.publish('frame_generator', draw_node.darwapp.video_generator(draw_node.orientation))
     
 @subscribe(draw_node, 'orientation')
 def set_orientation(orientation):

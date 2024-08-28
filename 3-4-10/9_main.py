@@ -47,6 +47,7 @@ def set_orientation(orientation):
     
     
 #####################################################cv2显示节点#######################################
+from miniROS import *
 import cv2
 import time
 
@@ -72,9 +73,9 @@ def process():
             display_node.frame_generator = None
             cv2.destroyAllWindows()
             break
-        if frame is LOOPSTOP_FRAME:
-            break
         if prev_frame_generator != display_node.frame_generator:
+            break
+        if frame is LOOPSTOP_FRAME:
             break
         if cv2.waitKey(1) == ord('q'):
             display_node.frame_generator = None
@@ -88,9 +89,11 @@ def handler(frame_generator):
         
 @subscribe(display_node, 'display_setting')
 def handler(monitor):
-    display_node.monitor = monitor # 在屏幕创建一个全屏窗口, monitor是窗口信息
+    display_node.monitor = monitor 
 
 
+display_node.register()
+miniROS.run()
 #################################################显示屏设置节点###########################################
 from screen import *
 

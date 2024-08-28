@@ -608,5 +608,5 @@ class DrawingApp:
         self.root.mainloop()
 
 if __name__=='__main__':
-    x = DrawingApp()
-    x.run()
+    drawing_app = DrawingApp()
+    drawing_app.run()
