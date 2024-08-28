@@ -28,8 +28,8 @@ ax_Kd = fig.add_axes([0.25, 0.05, 0.5, 0.03], )
 # 创建滑块
 s_target_height = Slider(ax_target_height, 'H', 0, 120, valinit=target_height)
 s_Kp = Slider(ax_Kp, 'P', 0.0, 1.0, valinit=0.1)
-s_Ki = Slider(ax_Ki, 'I', 0.0, 0.001, valinit=0.00035)
-s_Kd = Slider(ax_Kd, 'D', 0.0, 1.0, valinit=0.1)
+s_Ki = Slider(ax_Ki, 'I', 0.0, 0.001, valinit=0.0003)
+s_Kd = Slider(ax_Kd, 'D', 0.0, 1.0, valinit=0.4)
 
 def init():
     global drone, height_data, time_data

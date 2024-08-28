@@ -29,7 +29,7 @@ def update(frame):
     global drone, dt, height_data, time_data
 
     error = drone.target_height - drone.height # 计算误差
-    thrust = 0.8 * error # 根据误差按照0.1的比例系数计算推力
+    thrust = 0.1 * error # 根据误差按照0.1的比例系数计算推力
     drone.step(thrust, dt) 
 
     height_data.append(drone.height)
