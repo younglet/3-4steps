@@ -36,8 +36,8 @@ def start_draw():
 @add_method(draw_node)
 def play_generate():
     if draw_node.orientation is not None:
-        # 将视频生成器广播给'frame_gen'
-        Bus.publish('frame_gen', draw_node.darwapp.video_generator(draw_node.orientation))
+        # 将视频生成器广播给'frame_generator'
+        Bus.publish('frame_generator', draw_node.darwapp.video_generator(draw_node.orientation))
     
 @subscribe(draw_node, 'orientation')
 def set_orientation(orientation):
@@ -49,6 +49,7 @@ def set_orientation(orientation):
 #####################################################cv2显示节点#######################################
 import cv2
 import time
+
 display_node = Node('display')
 
 @initialize(display_node)
@@ -71,21 +72,17 @@ def process():
             display_node.frame_generator = None
             cv2.destroyAllWindows()
             break
-
         if frame is LOOPSTOP_FRAME:
             break
-
         if prev_frame_generator != display_node.frame_generator:
             break
-
         if cv2.waitKey(1) == ord('q'):
             display_node.frame_generator = None
             cv2.destroyAllWindows()
             break
-
         cv2.imshow('display', frame)
         
-@subscribe(display_node, 'frame_gen')
+@subscribe(display_node, 'frame_generator')
 def handler(frame_generator):
     display_node.frame_generator = frame_generator
         
@@ -93,15 +90,6 @@ def handler(frame_generator):
 def handler(monitor):
     display_node.monitor = monitor # 在屏幕创建一个全屏窗口, monitor是窗口信息
 
-@subscribe(display_node, 'frame_gen')
-def handler(frame_generator):
-    if frame_generator is not None:
-        display_node.frame_generator = frame_generator
-        
-@subscribe(display_node, 'display_setting')
-def handler(monitor):
-    # 在屏幕创建一个全屏窗口, monitor是窗口信息
-    display_node.monitor = monitor
 
 #################################################显示屏设置节点###########################################
 from screen import *

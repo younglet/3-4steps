@@ -24,21 +24,17 @@ def process():
             display_node.frame_generator = None
             cv2.destroyAllWindows()
             break
-
         if frame is LOOPSTOP_FRAME:
             break
-
         if prev_frame_generator != display_node.frame_generator:
             break
-
         if cv2.waitKey(1) == ord('q'):
             display_node.frame_generator = None
             cv2.destroyAllWindows()
             break
-
         cv2.imshow('display', frame)
         
-@subscribe(display_node, 'frame_gen')
+@subscribe(display_node, 'frame_generator')
 def handler(frame_generator):
     display_node.frame_generator = frame_generator
         
