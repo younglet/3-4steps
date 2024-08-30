@@ -15,16 +15,8 @@ class App:
         self.login_frame_init()
         self.main_frame_init()
         self.login_frame_show()
-    def log(self, message):
-        if self.log_text:
-            self.log_text.config(state='normal')
-            line = f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} : {str(message)}\n"
-            self.log_text.insert(tk.END, line)
-            self.log_text.see(tk.END)
-            self.log_text.config(state='disabled')
-    
+
     def func1(self):
-        self.log("功能1运行")
         if self.func1_hook:
             self.func1_hook()
 
