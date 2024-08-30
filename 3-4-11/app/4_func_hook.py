@@ -1,6 +1,5 @@
 import tkinter as tk
 import tkinter.ttk as ttk
-import datetime
 
 class App:
     def __init__(self):
