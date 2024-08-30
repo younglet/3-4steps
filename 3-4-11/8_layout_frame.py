@@ -12,7 +12,7 @@ label1.pack()
 button1 = ttk.Button(master=frame1, text='按钮1')
 button1.pack()
 
-frame2 = ttk.Frame(master=window, border=10, borderwidth=1, padding=10)
+frame2 = ttk.Frame(master=window)
 label2 = ttk.Label(master=frame2, text='标签2')
 label2.pack()
 button2 = ttk.Button(master=frame2, text='按钮2')

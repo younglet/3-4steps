@@ -7,6 +7,7 @@ gui_node = Node('GUI')
 def init():
     gui_node.app = App()
     gui_node.app.log('启动成功')
+    gui_node.app.func1_hook = lambda: print('模拟函数1启动')
 @set_task(gui_node, main=True)
 def process():
     gui_node.app.run()

@@ -8,33 +8,26 @@ class App:
         self.window.title("智能机器人助手")
         self.window.geometry("600x400")
         
-        self.login_frame_init()
-        self.main_frame_init()
-        
         self.PASSWORD = "123"
 
         self.func1_hook = None
-        self.func2_hook = None
 
+        self.login_frame_init()
+        self.main_frame_init()
         self.show_login_frame()
     def log(self, message):
         if self.log_text:
-            self.log_text.configure(state='normal')
+            self.log_text.config(state='normal')
             line = f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} : {str(message)}\n"
             self.log_text.insert(tk.END, line)
             self.log_text.see(tk.END)
-            self.log_text.configure(state='disabled')
+            self.log_text.config(state='disabled')
     
     def func1(self):
         self.log("功能1运行")
         if self.func1_hook:
-            self.func2_hook()
-    
-    def func2(self):
-        self.log('功能2运行')
-        if self.func2_hook:
             self.func1_hook()
-    
+
     def login_frame_init(self):
         self.login_frame = ttk.Frame(self.window)
         ttk.Label(self.login_frame, text="密码").grid(row=0, column=0)
@@ -53,10 +46,6 @@ class App:
         ttk.Button(self.func1_frame, text="功能1", command=lambda:self.func1()).pack()
         self.notebook.add(self.func1_frame, text="功能1")
 
-        self.func2_frame = ttk.Frame(self.notebook)
-        ttk.Button(self.func2_frame, text="功能2", command=lambda:self.func2()).pack()
-        self.notebook.add(self.func2_frame, text="功能2")
-        
         self.log_frame = ttk.Frame(self.notebook)
         self.log_text = tk.Text(self.log_frame, width=60, state='disabled')
         self.log_text.pack()
@@ -65,14 +54,12 @@ class App:
     def show_main_frame(self):
         self.login_frame.pack_forget()
         self.notebook.pack()
-
-
-    
+  
     def login(self):
         if self.password_entry.get() == self.PASSWORD:
             self.show_main_frame()
         else:
-            self.login_button.configure(text="密码错误")
+            self.login_button.config(text="密码错误")
 
     def run(self):
         self.window.mainloop()
@@ -80,10 +67,7 @@ class App:
 if __name__ == "__main__":
     def say_hi():
         print("hi")
-    def say_bye():
-        print("bye")
 
     app = App()
-    app.func1_hook = say_hello
-    app.func2_hook = say_bye
+    app.func1_hook = say_hi
     app.run()

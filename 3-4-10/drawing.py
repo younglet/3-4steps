@@ -46,9 +46,9 @@ class DrawingApp:
         
         # 设置样式
         self.style = ttk.Style()
-        self.style.configure("TButton", font=("Helvetica", 10))
-        self.style.configure("TLabel", font=("Helvetica", 10))
-        self.style.configure("TScale", troughcolor="gray", background="white")
+        self.style.config("TButton", font=("Helvetica", 10))
+        self.style.config("TLabel", font=("Helvetica", 10))
+        self.style.config("TScale", troughcolor="gray", background="white")
 
         # 绑定窗口关闭事件
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)

@@ -9,11 +9,13 @@ window.geometry('200x200')
 def function():
     print("点击了function按钮")
 
-function_button = ttk.Button(master=window, text="function按钮", command=function)
+# 通过回调函数设置按钮功能
+function_button = ttk.Button(master=window, text="function按钮", command=function) 
 function_button.pack()
 
 
-lambda_button = ttk.Button(master=window, text="lambda按钮", command=lambda: print("点击了lambda按钮"))
+# 通过lambda表达式设置按钮功能
+lambda_button = ttk.Button(master=window, text="lambda按钮", command=lambda: print("点击了lambda按钮")) 
 lambda_button.pack()
 
 window.mainloop()
