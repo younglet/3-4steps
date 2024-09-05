@@ -13,9 +13,8 @@ class App:
         self.get_weather_hook = None
         self.send_user_message_hook = None
 
-        self.login_frame_init()
         self.main_frame_init()
-        self.login_frame_show()
+        self.main_frame_show()
     def log(self, message):
         self.log_text.config(state='normal')
         line = f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} : {str(message)}\n"
@@ -35,17 +34,7 @@ class App:
         self.send_user_message_hook(message)
         self.log(f"用户输入：{message}")
 
-    def login_frame_init(self):
-        self.login_frame = ttk.Frame(self.window)
-        ttk.Label(self.login_frame, text="密码").grid(row=0, column=0)
-        self.password_entry = ttk.Entry(self.login_frame, show='*')
-        self.password_entry.grid(row=0, column=1)
-        self.login_button = ttk.Button(self.login_frame, text="登录", command=self.login)
-        self.login_button.grid(row=1, column=1, columnspan=2)
-    
-    def login_frame_show(self):
-        self.login_frame.pack(pady=100)
-    
+
     def main_frame_init(self):
         self.notebook = ttk.Notebook(self.window)
         
@@ -70,6 +59,7 @@ class App:
             self.chat_button.config(state='normal')
             self.bot_reply.config(text=res)
             self.log(f"机器人回复：{res}")
+
         self.update_bot_reply = update_bot_reply
 
         def start_chat():
@@ -94,18 +84,12 @@ class App:
         self.notebook.add(self.log_frame, text="日志")
 
     def main_frame_show(self):
-        self.login_frame.pack_forget()
         self.notebook.pack()
   
-    def login(self):
-        if self.password_entry.get() == self.PASSWORD:
-            self.main_frame_show()
-        else:
-            self.login_button.config(text="密码错误")
-
     def run(self):
         self.window.mainloop()
     
 if __name__ == "__main__":
     app = App()
+    app.get_weather_hook = lambda city_name:print(f"查询{city_name}天气")
     app.run()
