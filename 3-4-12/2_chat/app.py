@@ -27,7 +27,7 @@ class App:
         self.get_weather_hook(city_name)
         self.log(f"查询{city_name}天气功能运行")
 
-    def send_user_message(self, message):
+    def send_user_message(self):
         self.chat_button.config(state='disabled')
         self.user_input.config(state='disabled')
         message = self.user_input.get()
@@ -62,8 +62,8 @@ class App:
 
         self.update_bot_reply = update_bot_reply
 
-        def start_chat():
-            self.send_user_message(None)
+        def chat():
+            self.send_user_message()
             self.chat_button.config(text="继续")
             self.chat_button.pack_forget()
             self.user_input.pack()
@@ -71,7 +71,7 @@ class App:
 
 
         self.user_input = ttk.Entry(self.chat_frame)
-        self.chat_button = ttk.Button(self.chat_frame, text="开始", command=start_chat)
+        self.chat_button = ttk.Button(self.chat_frame, text="开始", command=chat)
         self.chat_button.pack()
         
         self.notebook.add(self.chat_frame, text="闲聊")
