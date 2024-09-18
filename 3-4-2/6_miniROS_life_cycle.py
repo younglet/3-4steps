@@ -13,6 +13,12 @@ def initialize():
     console_node.count = 0
     print('Console节点初始化')
 
+"""
+等效写法
+@initialize(console_node)
+def initialize(count = 0):
+    print('Console节点初始化')
+"""
 
 @subscribe(console_node, 'input_data') 
 def show_input_data(input_data): 
