@@ -1,0 +1,13 @@
+easygui
+requests
+sounddevice
+scipy
+numpy
+assemblyai
+pyttsx3
+ultralytics
+opencv-python
+mediapipe
+tkinterdnd2
+pillow
+screeninfo
