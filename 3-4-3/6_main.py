@@ -16,7 +16,7 @@ import time
 ################################################输入节点的建立###############################################
 input_node = Node('Input')
 
-@handler(input_node, loop=True)
+@set_task(input_node, loop=True)
 def set_input():
     city_name = input('请输入城市名称：')
     # 往订阅了'data'主题的节点广播数据
