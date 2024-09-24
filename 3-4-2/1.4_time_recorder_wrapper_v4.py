@@ -14,4 +14,4 @@ def print_10k_times():
     for i in range(10_000):  # 
         print(i)
 
-print_100k_times()
+print_10k_times()
