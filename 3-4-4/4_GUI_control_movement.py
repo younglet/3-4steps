@@ -8,7 +8,7 @@ import time
 gui_node = Node('GUI')
 @initialize(gui_node)
 def init():
-    gui_node.messages = []
+    gui_node.messages = [] # 消息队列
     try:
         with open('config.json', 'r', encoding='utf-8') as f:
             config = json.load(f)

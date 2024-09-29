@@ -10,7 +10,7 @@ def init():
     # 设置API URL
     weather_node.base_weather_url = "http://t.weather.itboy.net/api/weather/city/{}"
 
-    with open('/Users/yanglei/Desktop/3-4步骤代码/3-4-3/citycode.json', 'r', encoding='utf-8') as file:
+    with open('citycode.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
         weather_node.city_dict = {item['city_name']: item['city_code'] for item in data if item['city_code']}
     
